@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="ss" constructor="PropertyImageManager" version="0.1.16" display-name-key="imageUploader" description-key="imageUploader description" control-type="standard" >
+  <control namespace="ss" constructor="PropertyImageManager" version="0.1.21" display-name-key="imageUploader" description-key="imageUploader description" control-type="standard" >
     <external-service-usage enabled="false">
     </external-service-usage>
 
     <property 
         name="parentLookupSchema"
-        display-name-key="Parent Entity"
+        display-name-key="Parent Entity Schema Name (for Lookup)"
         description-key="Logical name of parent entity"
         of-type="SingleLine.Text"
         usage="input"
@@ -14,7 +14,7 @@
 
     <property 
         name="parentEntityName"
-        display-name-key="Parent Entity"
+        display-name-key="Parent Entity Logical Name"
         description-key="Logical name of parent entity"
         of-type="SingleLine.Text"
         usage="input"

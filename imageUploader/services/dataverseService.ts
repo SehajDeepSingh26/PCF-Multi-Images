@@ -28,14 +28,14 @@ export async function createImageRecord(
     parentId: string,
     base64Image: string,
     imageName: string,
+    images: any[],
     categoryValue?: number,
-    imageType?: string 
+    imageType?: string,
 ): Promise<void> {
 
-    const images = await retrieveImages(context, parentLookupSchema, parentId);
 
-    const maxOrder = images.length > 0
-        ? Math.max(...images.map(i => i.ss_sortorder || 0))
+    const maxOrder = images?.length > 0
+        ? Math.max(...images.map(i => i[PropertyImageConfig.fields.sortOrder] || 0))
         : 0;
 
     const data: any = {
@@ -73,7 +73,7 @@ export async function retrieveImages(
         ${PropertyImageConfig.fields.sortOrder},
         ${PropertyImageConfig.fields.imageName},
         &$filter=_${lookupLogical}_value eq ${parentId}
-        &$orderby=ss_sortorder asc`;
+        &$orderby=${PropertyImageConfig.fields.sortOrder} asc`;
 
     const result = await context.webAPI.retrieveMultipleRecords(
         PropertyImageConfig.entity.propertyImage,

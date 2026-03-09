@@ -34,6 +34,7 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
     private isUploadEnabled: boolean = false;
     private imageType: string = "jpeg";
     private imageName: string = `Property Image ${new Date().toISOString()}`;
+    private images: any[] = [];
 
     private previewTooltip: HTMLDivElement;
     private previewImage: HTMLImageElement;
@@ -176,20 +177,6 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
         categoryWrapper.appendChild(this.categoryDropdown);
         this.container.appendChild(categoryWrapper);
 
-        // ===== Notes Section =====
-        const notes = document.createElement("div");
-        notes.classList.add("notes-section");
-
-        notes.innerHTML = `
-            <div>
-                <p> <b> Note: Below points are not applicable for the save button</b> </p>
-                <p>Internal/External image will be set to 100x100</p>
-                <p>Main image will be set to 500x500</p>
-                <p>Floor Plan will be set to 1447x406</p>
-            </div>
-        `;
-        this.container.appendChild(notes);
-
         // ===== Buttons =====
         const buttonRow = document.createElement("div");
         buttonRow.classList.add("button-row");
@@ -202,6 +189,7 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
                 this.originalImageBase64,
                 (val) => this.originalImageBase64 = val,
                 async () => {
+                    console.log("Saving original image...", this.images);
                     await createImageRecord(
                         this.context,
                         this.parentEntityName,
@@ -209,18 +197,19 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
                         this.parentId!,
                         this.originalImageBase64!,
                         this.imageName,
+                        this.images,
                         this.categoryDropdown.value
                             ? Number(this.categoryDropdown.value)
                             : undefined,
-                        this.imageType
+                        this.imageType,
                     );
 
-                    const images = await retrieveImages(
+                    this.images = await retrieveImages(
                         this.context,
                         this.parentLookupSchema,
                         this.parentId!
                     );
-                    this.renderImages(images);
+                    this.renderImages(this.images);
                     clearBtn.click();
                 }
             );
@@ -241,28 +230,27 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
                             this.parentId!,
                             this.croppedImageBase64!,
                             this.imageName,
+                            this.images,
                             this.categoryDropdown.value
                             ? Number(this.categoryDropdown.value)
                             : undefined,
                             this.imageType
                         );
                     
-                        const images = await retrieveImages(
+                        this.images = await retrieveImages(
                             this.context,
                             this.parentLookupSchema,
                             this.parentId!
                         );
                         
-                        this.renderImages(images);
+                        this.renderImages(this.images);
                         clearBtn.click();
                     },
                     this.imageType
                 );
             
             const resetCropBtn = document.createElement("button");
-            resetCropBtn.classList.add("btn", 
-                
-                "btn-warning");
+            resetCropBtn.classList.add("btn", "btn-warning");
             resetCropBtn.innerText = "Remove Cropped Formatting";
             
             resetCropBtn.onclick = () =>
@@ -334,19 +322,19 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
         this.parentLookupSchema = context.parameters.parentLookupSchema.raw!;
 
         const rawId = (context as any).page.entityId;
-        // this.renderTempImages();
+        // this.renderTempImages()
 
         if (rawId) {
             this.parentId = rawId.replace(/[{}]/g, "");
             this.isUploadEnabled = true;
 
-            const images = await retrieveImages(
+            this.images = await retrieveImages(
                 this.context,
                 this.parentLookupSchema,
                 this.parentId!
             );
 
-            this.renderImages(images);
+            this.renderImages(this.images);
             await loadCategoriesLogic(this.context, this.categoryDropdown);
         } 
         else {
@@ -467,8 +455,6 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
                 const imageName =
                     img[PropertyImageConfig.fields.imageName]
 
-                console.log("Image Name:", imageName);
-
                 this.previewTooltip.innerHTML = `
                     <div class="preview-category">${imageName ?? "Uncategorized"}</div>
                     <img src="${target.src}" class="apple-preview-image"/>
@@ -519,6 +505,8 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
         document.body.appendChild(this.previewTooltip);
     }
 
+    
+
     // private renderTempImages(): void {
     //     const tempImages = [
     //         {
@@ -558,6 +546,7 @@ export class PropertyImageManager implements ComponentFramework.StandardControl<
     //             ss_imagedata: "https://picsum.photos/300/150?random=9"
     //         }
     //     ];
+    //     this.images = tempImages;
 
     //     this.renderImages(tempImages);
 

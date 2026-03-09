@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest>
+  <control namespace="ss" constructor="PropertyImageManager" version="0.1.16" display-name-key="imageUploader" description-key="imageUploader description" control-type="standard" >
+    <external-service-usage enabled="false">
+    </external-service-usage>
+
+    <property 
+        name="parentLookupSchema"
+        display-name-key="Parent Entity"
+        description-key="Logical name of parent entity"
+        of-type="SingleLine.Text"
+        usage="input"
+        required="true" />
+
+    <property 
+        name="parentEntityName"
+        display-name-key="Parent Entity"
+        description-key="Logical name of parent entity"
+        of-type="SingleLine.Text"
+        usage="input"
+        required="true" />
+
+    <property 
+        name="backgroundColor"
+        display-name-key="Background Color"
+        description-key="Background color of control"
+        of-type="SingleLine.Text"
+        usage="input"
+        required="false" />
+
+    <property
+      name="hostField"
+      display-name-key="Host Field"
+      of-type="SingleLine.Text"
+      usage="bound"
+      required="false" />
+
+    <resources>
+      <code path="index.ts" order="1"/>
+      <css path="./ui/style.css" order="2" />
+    </resources>
+
+    <feature-usage>
+      <uses-feature name="WebAPI" required="true" />
+      <uses-feature name="Utility" required="true" />
+    </feature-usage>
+
+  </control>
+</manifest>
